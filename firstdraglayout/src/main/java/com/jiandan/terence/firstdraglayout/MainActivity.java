@@ -11,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main3);
         TextView textView=(TextView)findViewById(R.id.tv_text);
         if(textView!=null){
             textView.setOnClickListener(new View.OnClickListener() {
@@ -21,5 +21,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+        findViewById(R.id.overlay).setRotation(-90);
+
     }
 }

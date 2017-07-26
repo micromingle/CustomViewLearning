@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+   <com.jiandan.terence.firstdraglayout.OverlayView
+       android:layout_width="350dp"
+       android:layout_height="200dp"
+       android:id="@+id/overlay"
+       android:background="@color/colorAccent"
+       android:padding="10dp"
+       android:layout_centerInParent="true"
+       android:src="@drawable/icon_background"
+       custom:strike_color="@android:color/holo_green_light"
+       custom:strike_lenth="15dp"
+       custom:strike_width="5dp"/>
+
+</RelativeLayout>
