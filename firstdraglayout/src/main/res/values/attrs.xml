@@ -4,5 +4,7 @@
         <attr name="strike_width" format="dimension"></attr>
         <attr name="strike_color" format="reference"></attr>
         <attr name="strike_lenth" format="dimension"></attr>
+        <attr name="line_color" format="reference"></attr>
+        <attr name="line_width" format="dimension"></attr>
     </declare-styleable>
 </resources>

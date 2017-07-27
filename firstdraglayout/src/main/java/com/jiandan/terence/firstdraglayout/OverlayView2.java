@@ -14,30 +14,27 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 
 /**
  * Created by HP on 2017/7/26.
  */
 
-public class OverlayView extends View {
+public class OverlayView2 extends AppCompatImageView {
     private String TAG = "OverlayView";
     int mLen = 30, mStrikeWidth = 10;
     int mColor, mLineColor, mLineWidth = 1;
-    Paint mAnglePaint, mLinePaint;
-    Rect mTransParentRect;
-    private boolean isForeGroundDrew = false;
-    float mRatio=1.73f;//宽度和高度的比
-    int mTransParentHeight=300, mTransParentWidth=(int)(mTransParentHeight*mRatio);
-    int  verticalPad = 30,horiPad = (int)(verticalPad*mRatio);
+    Paint mPaint, mLinePaint;
 
-    public OverlayView(Context context) {
+
+
+    public OverlayView2(Context context) {
         super(context);
     }
 
-    public OverlayView(Context context, @Nullable AttributeSet attrs) {
+    public OverlayView2(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initAttrs(attrs);
 
@@ -56,25 +53,11 @@ public class OverlayView extends View {
         initPaint();
     }
 
-    int mHeight,mWidth;
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        mHeight=getMeasuredHeight();
-        mWidth=getMeasuredWidth();
-        if(mHeight<mTransParentHeight){
-            mHeight=mTransParentHeight;
-        }
-        if(mWidth<mTransParentWidth){
-            mWidth=mTransParentWidth;
-        }
-        setMeasuredDimension(mWidth,mHeight);
-    }
 
     private void initPaint() {
-        mAnglePaint = new Paint();
-        mAnglePaint.setColor(mColor);
-        mAnglePaint.setStrokeWidth(mStrikeWidth);
+        mPaint = new Paint();
+        mPaint.setColor(mColor);
+        mPaint.setStrokeWidth(mStrikeWidth);
 
         mLinePaint = new Paint();
         mLinePaint.setColor(mLineColor);
@@ -87,62 +70,30 @@ public class OverlayView extends View {
 
         Rect rect = new Rect();
         getDrawingRect(rect);
-
-        //根据剩余的宽高来计算不透明的边距
-        int horizontalPadding=(mWidth-mTransParentWidth)/2;
-        int verticalPadding=(mHeight-mTransParentHeight)/2;
-
-        int top = rect.top + verticalPadding;
-        int left = rect.left + horizontalPadding;
-        int right = rect.right - horizontalPadding;
-        int bottom = rect.bottom - verticalPadding;
-
-        mTransParentRect = new Rect(left, top, right, bottom);
+        int top = rect.top;
+        int left = rect.left;
+        int right = rect.right;
+        int bottom = rect.bottom;
         Log.d(TAG, String.format("top=%s left=%s right=%s bottom=%s", top, left, right, bottom));
 
-        // 画各个对角，线
         //left up corner
-        canvas.drawLine(left, top + mLen, left, top, mAnglePaint);
-        canvas.drawLine(left, top, left + mLen, top, mAnglePaint);
+        canvas.drawLine(left, top + mLen, left, top, mPaint);
+        canvas.drawLine(left, top, left + mLen, top, mPaint);
 
         canvas.drawLine(left + mLen, top, right - mLen, top, mLinePaint);
         //right up corner
-        canvas.drawLine(right - mLen, top, right, top, mAnglePaint);
-        canvas.drawLine(right, top, right, top + mLen, mAnglePaint);
+        canvas.drawLine(right - mLen, top, right, top, mPaint);
+        canvas.drawLine(right, top, right, top + mLen, mPaint);
         canvas.drawLine(left, top + mLen, left, bottom - mLen, mLinePaint);
         //left bottom corner
-        canvas.drawLine(left, bottom - mLen, left, bottom, mAnglePaint);
-        canvas.drawLine(left, bottom, left + mLen, bottom, mAnglePaint);
+        canvas.drawLine(left, bottom - mLen, left, bottom, mPaint);
+        canvas.drawLine(left, bottom, left + mLen, bottom, mPaint);
         canvas.drawLine(left + mLen, bottom, right - mLen, bottom, mLinePaint);
         //right bottom corner
-        canvas.drawLine(right - mLen, bottom, right, bottom, mAnglePaint);
-        canvas.drawLine(right, bottom - mLen, right, bottom, mAnglePaint);
+        canvas.drawLine(right - mLen, bottom, right, bottom, mPaint);
+        canvas.drawLine(right, bottom - mLen, right, bottom, mPaint);
         canvas.drawLine(right, top + mLen, right, bottom - mLen, mLinePaint);
 
-        // 画图
-        Drawable drawable = getResources().getDrawable(R.drawable.icon_background);
-        Rect dst = new Rect(left + horiPad, top + verticalPad, right - horiPad, bottom - verticalPad);
-        canvas.drawBitmap(drawableToBitmap(drawable), null, dst, null);
-
-        //画字
-        String text="are you really do that";
-        float textWidth=mAnglePaint.measureText(text);
-        Paint.FontMetrics fm = mAnglePaint.getFontMetrics();
-        float textHeight = fm.descent - fm.ascent;
-        Log.d(TAG, String.format("textWidth %s textHeight %s padding bottom  %s", textWidth,textHeight,getPaddingBottom()));
-        int rectWidth=mTransParentRect.right-mTransParentRect.left;
-        float horidelta=(rectWidth-textWidth)/2;//宽度剩余空间
-        float veridelta=(verticalPadding+textHeight)/2;//高度剩余空间
-        mAnglePaint.setTextSize(25);
-        canvas.drawText("are you really do that",mTransParentRect.left+horidelta,mTransParentRect.bottom+veridelta, mAnglePaint);
-
-
-
-        //画背景
-        if (!isForeGroundDrew) {
-            drawForeground();
-            isForeGroundDrew = true;
-        }
     }
 
     @Override
@@ -172,7 +123,6 @@ public class OverlayView extends View {
         super.onRestoreInstanceState(state);
     }
 
-    //bitmap 打洞
     private Bitmap punchAHoleInABitmap(Bitmap foreground) {
         Log.d(TAG, String.format(" foreground width %s  height %s", foreground.getWidth(), foreground.getHeight()));
         Bitmap bitmap = Bitmap.createBitmap(foreground.getWidth(), foreground.getHeight(), Bitmap.Config.ARGB_8888);
@@ -181,7 +131,7 @@ public class OverlayView extends View {
         canvas.drawBitmap(foreground, 0, 0, paint);
         paint.setAntiAlias(true);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        canvas.drawRect(mTransParentRect, paint);
+        canvas.drawCircle(getMeasuredWidth() / 2, getMeasuredHeight() / 2, getMeasuredHeight() / 2, paint);
         return bitmap;
     }
 
