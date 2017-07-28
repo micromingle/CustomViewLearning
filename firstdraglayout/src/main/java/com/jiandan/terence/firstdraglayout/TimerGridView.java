@@ -22,8 +22,8 @@ public class TimerGridView extends View {
     private Paint mBlackPaint = new Paint();
     private Paint mRedPaint = new Paint();
     private Paint mDividerPaint = new Paint();
-    String mText ="";
-    private String TAG = "PixelGridView";
+    String mText = "";
+    private String TAG = "TimerGridView";
     String[] mTextArray = mText.split("");
 
     public TimerGridView(Context context) {
@@ -41,15 +41,15 @@ public class TimerGridView extends View {
         mDividerPaint.setStyle(Paint.Style.STROKE);
         mDividerPaint.setColor(Color.GRAY);
 
-        TypedArray ta=getContext().obtainStyledAttributes(attrs,R.styleable.TimerGridView);
-        mText=ta.getString(R.styleable.TimerGridView_timer_text);
-        if(!TextUtils.isEmpty(mText)){
+        TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.TimerGridView);
+        mText = ta.getString(R.styleable.TimerGridView_timer_text);
+        if (!TextUtils.isEmpty(mText)) {
             mTextArray = mText.split("");
         }
-        mNumColumns=ta.getInteger(R.styleable.TimerGridView_columnCount,6);
-        mNumRows=ta.getInteger(R.styleable.TimerGridView_rowCount,6);
-
+        mNumColumns = ta.getInteger(R.styleable.TimerGridView_columnCount, 6);
+        mNumRows = ta.getInteger(R.styleable.TimerGridView_rowCount, 6);
         ta.recycle();
+
         Log.d(TAG, "mtext lenth =" + mTextArray.length);
     }
 
@@ -75,7 +75,7 @@ public class TimerGridView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         calculateDimensions();
-        Log.d(TAG, "onSizeChanged" );
+        Log.d(TAG, "onSizeChanged");
     }
 
     private void calculateDimensions() {
@@ -85,9 +85,6 @@ public class TimerGridView extends View {
 
         mCellWidth = getWidth() / mNumColumns;
         mCellHeight = getHeight() / mNumRows;
-
-        // cellChecked = new boolean[mNumColumns][mNumRows];
-
         invalidate();
     }
 
@@ -111,7 +108,7 @@ public class TimerGridView extends View {
 
     public void stopPlay() {
         removeCallbacks(mTimerRunnable);
-       // resetTimer();
+        // resetTimer();
     }
 
     private void resetTimer() {
@@ -149,8 +146,7 @@ public class TimerGridView extends View {
                     //画黑色
                     paint = mBlackPaint;
                 }
-                //第一个是图片所以特殊处理
-               // if(mTextArray!=null) {
+                if (mTextArray != null) {
                     if (textIndex < mTextArray.length) {
                         if (textIndex != 0) {
                             String text = mTextArray[textIndex];
@@ -167,16 +163,15 @@ public class TimerGridView extends View {
                             int dx = (int) ((mCellWidth - bWidth) / 2);
                             int dy = (int) (mCellHeight - bHeight) / 2;
                             canvas.drawBitmap(bitmap, i * mCellWidth + dx, j * mCellHeight + dy, paint);
-                            // canvas.drawBitmap(bitmap, dx, dy,null);
                         }
                     }
 
                     if (mCurrentIndex > mTextArray.length) {
                         stopPlay();
                     }
-//                }else{
-//                    Log.d(TAG,"text array is null");
-//                }
+                } else {
+                    Log.d(TAG, "text array is null");
+                }
 
             }
         }
