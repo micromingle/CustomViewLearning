@@ -101,7 +101,7 @@ public class OverlayView2 extends AppCompatImageView {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", super.onSaveInstanceState());
         bundle.putInt("mLen", mLen); // ... save stuff
-        bundle.putInt("mColor", mColor);
+        bundle.putInt("mTopTextColor", mColor);
         bundle.putInt("mStrikeWidth", mStrikeWidth);
         bundle.putInt("mLineColor", mLineColor);
         bundle.putInt("mLineWidth", mLineWidth);
@@ -115,7 +115,7 @@ public class OverlayView2 extends AppCompatImageView {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
             mLen = bundle.getParcelable("mLen");
-            mColor = bundle.getParcelable("mColor");
+            mColor = bundle.getParcelable("mTopTextColor");
             mStrikeWidth = bundle.getParcelable("mStrikeWidth");
             mLineColor = bundle.getParcelable("mLineColor");
             mLineWidth = bundle.getParcelable("mLineWidth");

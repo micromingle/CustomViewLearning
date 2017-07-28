@@ -7,4 +7,18 @@
         <attr name="line_color" format="reference"></attr>
         <attr name="line_width" format="dimension"></attr>
     </declare-styleable>
+
+    <declare-styleable name="HandOverlayView">
+        <attr name="hint_text" format="string"></attr>
+        <attr name="text_color" format="reference"></attr>
+        <attr name="rect_radis" format="dimension"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="VideoOverlayView">
+        <attr name="top_text" format="string"></attr>
+        <attr name="bottom_text_color" format="reference"></attr>
+        <attr name="bottom_text" format="string"></attr>
+        <attr name="top_text_color" format="reference"></attr>
+        <attr name="outer_radis" format="dimension"></attr>
+    </declare-styleable>
 </resources>

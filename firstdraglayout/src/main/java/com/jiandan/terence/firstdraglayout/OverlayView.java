@@ -21,7 +21,8 @@ import android.view.View;
 /**
  * Created by HP on 2017/7/26.
  */
-
+//由于view最终要旋转90度 所以view的高用屏幕的宽来算
+    // view for 身份证正反面
 public class OverlayView extends View {
     private String TAG = "OverlayView";
     int mLen = 30, mStrikeWidth = 10;
@@ -32,6 +33,9 @@ public class OverlayView extends View {
     float mRatio=1.73f;//宽度和高度的比
     int mTransParentHeight=300, mTransParentWidth=(int)(mTransParentHeight*mRatio);
     int  verticalPad = 30,horiPad = (int)(verticalPad*mRatio);
+    int mHeight,mWidth;
+    private final int TOP=150;//dip
+    //private int mOuterPadding=TOP;
 
     public OverlayView(Context context) {
         super(context);
@@ -51,23 +55,17 @@ public class OverlayView extends View {
         mColor = ta.getColor(R.styleable.OverlayView_strike_color, Color.GREEN);
         mLineColor = ta.getColor(R.styleable.OverlayView_line_color, Color.GRAY);
         mLineWidth = (int) ta.getDimension(R.styleable.OverlayView_line_width, mLineWidth);
-
         ta.recycle();
         initPaint();
     }
 
-    int mHeight,mWidth;
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        mHeight=getMeasuredHeight();
-        mWidth=getMeasuredWidth();
-        if(mHeight<mTransParentHeight){
-            mHeight=mTransParentHeight;
-        }
-        if(mWidth<mTransParentWidth){
-            mWidth=mTransParentWidth;
-        }
+
+        mHeight=getResources().getDisplayMetrics().widthPixels;
+        mWidth=(int)(mHeight*mRatio);
+        mTransParentHeight=getResources().getDisplayMetrics().widthPixels-2*TOP;
+        mTransParentWidth=(int)(mTransParentHeight*mRatio);
         setMeasuredDimension(mWidth,mHeight);
     }
 
@@ -90,7 +88,7 @@ public class OverlayView extends View {
 
         //根据剩余的宽高来计算不透明的边距
         int horizontalPadding=(mWidth-mTransParentWidth)/2;
-        int verticalPadding=(mHeight-mTransParentHeight)/2;
+        int verticalPadding=TOP;
 
         int top = rect.top + verticalPadding;
         int left = rect.left + horizontalPadding;
@@ -133,14 +131,14 @@ public class OverlayView extends View {
         int rectWidth=mTransParentRect.right-mTransParentRect.left;
         float horidelta=(rectWidth-textWidth)/2;//宽度剩余空间
         float veridelta=(verticalPadding+textHeight)/2;//高度剩余空间
-        mAnglePaint.setTextSize(25);
+        mAnglePaint.setTextSize(40);
         canvas.drawText("are you really do that",mTransParentRect.left+horidelta,mTransParentRect.bottom+veridelta, mAnglePaint);
-
 
 
         //画背景
         if (!isForeGroundDrew) {
             drawForeground();
+            setRotation(-90);
             isForeGroundDrew = true;
         }
     }
@@ -150,7 +148,7 @@ public class OverlayView extends View {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", super.onSaveInstanceState());
         bundle.putInt("mLen", mLen); // ... save stuff
-        bundle.putInt("mColor", mColor);
+        bundle.putInt("mTopTextColor", mColor);
         bundle.putInt("mStrikeWidth", mStrikeWidth);
         bundle.putInt("mLineColor", mLineColor);
         bundle.putInt("mLineWidth", mLineWidth);
@@ -164,7 +162,7 @@ public class OverlayView extends View {
             Bundle bundle = (Bundle) state;
             state = bundle.getParcelable("superState");
             mLen = bundle.getParcelable("mLen");
-            mColor = bundle.getParcelable("mColor");
+            mColor = bundle.getParcelable("mTopTextColor");
             mStrikeWidth = bundle.getParcelable("mStrikeWidth");
             mLineColor = bundle.getParcelable("mLineColor");
             mLineWidth = bundle.getParcelable("mLineWidth");

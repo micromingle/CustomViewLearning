@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main3);
+        setContentView(R.layout.activity_main4);
       //  setContentView(new Panel(this));
         TextView textView = (TextView) findViewById(R.id.tv_text);
         if (textView != null) {
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
             mOverlayView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             mLayoutParams = mOverlayView.getLayoutParams();
             mRotationSensor = new RotateSensorManager(this);
-            rotateAndScaleView(-90);
+          //  rotateAndScaleView(-90);
             mRotationSensor.setRotateCallBack(new RotateSensorManager.RotationCallBack() {
                 @Override
                 public void onRotate(float rotation) {
@@ -58,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
             });
         }
         //  findViewById(R.id.overlay).setRotation(-90);
+        TimerGridView pixelGrid = new TimerGridView(this);
+        pixelGrid.setmNumColumns(6);
+        pixelGrid.setmNumRows(6);
+
+        setContentView(pixelGrid);
+        pixelGrid.startPlay();
 
     }
 
