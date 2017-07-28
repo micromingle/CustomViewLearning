@@ -21,4 +21,10 @@
         <attr name="top_text_color" format="reference"></attr>
         <attr name="outer_radis" format="dimension"></attr>
     </declare-styleable>
+
+    <declare-styleable name="TimerGridView">
+        <attr name="timer_text" format="string"></attr>
+        <attr name="columnCount" format="integer"></attr>
+        <attr name="rowCount" format="integer"></attr>
+    </declare-styleable>
 </resources>

@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main4);
+        setContentView(R.layout.activity_main5);
       //  setContentView(new Panel(this));
         TextView textView = (TextView) findViewById(R.id.tv_text);
         if (textView != null) {
@@ -57,12 +57,9 @@ public class MainActivity extends AppCompatActivity {
             });
         }
         //  findViewById(R.id.overlay).setRotation(-90);
-        TimerGridView pixelGrid = new TimerGridView(this);
-        pixelGrid.setmNumColumns(6);
-        pixelGrid.setmNumRows(6);
-
-        setContentView(pixelGrid);
+        TimerGridView pixelGrid = (TimerGridView) findViewById(R.id.timer_view);
         pixelGrid.startPlay();
+
 
     }
 

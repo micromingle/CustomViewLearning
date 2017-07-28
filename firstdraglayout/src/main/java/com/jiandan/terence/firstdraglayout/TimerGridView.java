@@ -1,11 +1,13 @@
 package com.jiandan.terence.firstdraglayout;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -13,13 +15,14 @@ import android.view.View;
 
 import static android.util.TypedValue.COMPLEX_UNIT_SP;
 
+//仅支持中文
 public class TimerGridView extends View {
     private int mNumColumns, mNumRows;
     private int mCellWidth, mCellHeight;
     private Paint mBlackPaint = new Paint();
     private Paint mRedPaint = new Paint();
     private Paint mDividerPaint = new Paint();
-    String mText ="。你真的要这样做吗，真的吗，真的这样做吗 我是真的。";
+    String mText ="";
     private String TAG = "PixelGridView";
     String[] mTextArray = mText.split("");
 
@@ -37,6 +40,16 @@ public class TimerGridView extends View {
         mRedPaint.setTextSize(TypedValue.applyDimension(COMPLEX_UNIT_SP, 20, getResources().getDisplayMetrics()));
         mDividerPaint.setStyle(Paint.Style.STROKE);
         mDividerPaint.setColor(Color.GRAY);
+
+        TypedArray ta=getContext().obtainStyledAttributes(attrs,R.styleable.TimerGridView);
+        mText=ta.getString(R.styleable.TimerGridView_timer_text);
+        if(!TextUtils.isEmpty(mText)){
+            mTextArray = mText.split("");
+        }
+        mNumColumns=ta.getInteger(R.styleable.TimerGridView_columnCount,6);
+        mNumRows=ta.getInteger(R.styleable.TimerGridView_rowCount,6);
+
+        ta.recycle();
         Log.d(TAG, "mtext lenth =" + mTextArray.length);
     }
 
@@ -62,6 +75,7 @@ public class TimerGridView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         calculateDimensions();
+        Log.d(TAG, "onSizeChanged" );
     }
 
     private void calculateDimensions() {
@@ -135,30 +149,34 @@ public class TimerGridView extends View {
                     //画黑色
                     paint = mBlackPaint;
                 }
-                //第一个总是会有一个空格,所以要特殊处理下
-                if (textIndex < mTextArray.length-1) {
-                    if(textIndex!=0) {
-                        String text = mTextArray[textIndex+1];
-                        float textWidth = paint.measureText(text);
-                        Paint.FontMetrics fm = paint.getFontMetrics();
-                        float textHeight = fm.descent - fm.ascent;
-                        int dx = (int) ((mCellWidth - textWidth) / 2);
-                        int dy = (int) (mCellHeight - textHeight) / 2;
-                        canvas.drawText(text, i * mCellWidth + dx, (j + 1) * mCellHeight - dy, paint);
-                    }else{
-                        Bitmap bitmap= BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);
-                        int bWidth=bitmap.getWidth();
-                        int bHeight=bitmap.getHeight();
-                        int dx = (int) ((mCellWidth - bWidth) / 2);
-                        int dy = (int) (mCellHeight - bHeight) / 2;
-                        canvas.drawBitmap(bitmap, i * mCellWidth + dx, j * mCellHeight +dy, paint);
-                       // canvas.drawBitmap(bitmap, dx, dy,null);
+                //第一个是图片所以特殊处理
+               // if(mTextArray!=null) {
+                    if (textIndex < mTextArray.length) {
+                        if (textIndex != 0) {
+                            String text = mTextArray[textIndex];
+                            float textWidth = paint.measureText(text);
+                            Paint.FontMetrics fm = paint.getFontMetrics();
+                            float textHeight = fm.descent - fm.ascent;
+                            int dx = (int) ((mCellWidth - textWidth) / 2);
+                            int dy = (int) (mCellHeight - textHeight) / 2;
+                            canvas.drawText(text, i * mCellWidth + dx, (j + 1) * mCellHeight - dy, paint);
+                        } else {
+                            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+                            int bWidth = bitmap.getWidth();
+                            int bHeight = bitmap.getHeight();
+                            int dx = (int) ((mCellWidth - bWidth) / 2);
+                            int dy = (int) (mCellHeight - bHeight) / 2;
+                            canvas.drawBitmap(bitmap, i * mCellWidth + dx, j * mCellHeight + dy, paint);
+                            // canvas.drawBitmap(bitmap, dx, dy,null);
+                        }
                     }
-                }
 
-                if (mCurrentIndex > mTextArray.length) {
-                    stopPlay();
-                }
+                    if (mCurrentIndex > mTextArray.length) {
+                        stopPlay();
+                    }
+//                }else{
+//                    Log.d(TAG,"text array is null");
+//                }
 
             }
         }
@@ -171,5 +189,6 @@ public class TimerGridView extends View {
             canvas.drawLine(0, i * mCellHeight, width, i * mCellHeight, mDividerPaint);
         }
     }
+
 
 }
