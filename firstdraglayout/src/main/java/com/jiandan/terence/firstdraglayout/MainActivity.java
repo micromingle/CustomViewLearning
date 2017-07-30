@@ -9,9 +9,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jiandan.terence.firstdraglayout.flappyBird.FlappyBirdView;
 
 public class MainActivity extends AppCompatActivity {
     RotateSensorManager mRotationSensor;
@@ -22,8 +26,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main5);
+        //setContentView(R.layout.activity_main5);
       //  setContentView(new Panel(this));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         TextView textView = (TextView) findViewById(R.id.tv_text);
         if (textView != null) {
             textView.setOnClickListener(new View.OnClickListener() {
@@ -57,9 +64,10 @@ public class MainActivity extends AppCompatActivity {
             });
         }
         //  findViewById(R.id.overlay).setRotation(-90);
-        TimerGridView pixelGrid = (TimerGridView) findViewById(R.id.timer_view);
-        pixelGrid.startPlay();
-
+       // TimerGridView pixelGrid = (TimerGridView) findViewById(R.id.timer_view);
+       // pixelGrid.startPlay();
+        FlappyBirdView flappyBirdView=new FlappyBirdView(this);
+        setContentView(flappyBirdView);
 
     }
 
