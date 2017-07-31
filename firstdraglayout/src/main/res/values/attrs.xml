@@ -6,6 +6,7 @@
         <attr name="strike_lenth" format="dimension"></attr>
         <attr name="line_color" format="reference"></attr>
         <attr name="line_width" format="dimension"></attr>
+        <attr name="bottom_hint_text" format="string"></attr>
     </declare-styleable>
 
     <declare-styleable name="HandOverlayView">

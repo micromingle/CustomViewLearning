@@ -26,11 +26,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main5);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_main3);
       //  setContentView(new Panel(this));
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         TextView textView = (TextView) findViewById(R.id.tv_text);
         if (textView != null) {
             textView.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
        // TimerGridView pixelGrid = (TimerGridView) findViewById(R.id.timer_view);
        // pixelGrid.startPlay();
         FlappyBirdView flappyBirdView=new FlappyBirdView(this);
-        setContentView(flappyBirdView);
+      //  setContentView(new OverlayView(this));
 
     }
 

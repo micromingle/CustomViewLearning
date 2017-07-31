@@ -9,19 +9,17 @@
     >
 
    <com.jiandan.terence.firstdraglayout.OverlayView
-       android:layout_width="262dp"
-       android:layout_height="150dp"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
        android:id="@+id/overlay"
-       android:paddingLeft="30dp"
-       android:paddingTop="30dp"
-       android:paddingRight="30dp"
-       android:paddingBottom="30dp"
+       android:paddingRight="50dp"
+       android:paddingLeft="50dp"
        android:layout_centerInParent="true"
-       android:src="@drawable/icon_background"
        custom:strike_color="@android:color/holo_green_light"
-       custom:strike_lenth="5dp"
-       custom:strike_width="1dp"
-       custom:line_color="@color/colorPrimary"
-       custom:line_width="1px"/>
+       custom:strike_lenth="10dp"
+       custom:strike_width="3dp"
+       custom:line_color="@android:color/white"
+       custom:line_width="1px"
+       custom:bottom_hint_text="are you going to do this in me"/>
 
 </RelativeLayout>
