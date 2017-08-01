@@ -3,7 +3,6 @@ package com.jiandan.terence.firstdraglayout;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -27,7 +26,7 @@ import android.view.View;
  */
 //由于view最终要旋转90度 所以view的高用屏幕的宽来算
 // view for 身份证正反面
-public class OverlayView extends View {
+public class IDOverlayView extends View {
     private String TAG = "OverlayView";
     int mStrikeLen = 30, mStrikeWidth = 10;
     int mColor, mLineColor, mLineWidth = 1;
@@ -36,18 +35,19 @@ public class OverlayView extends View {
     private boolean isForeGroundDrew = false;
     float mRatio = 1.73f;//宽度和高度的比
     int mTransParentHeight = 300, mTransParentWidth = (int) (mTransParentHeight * mRatio);
-    int horiPad = 30, verticalPad = (int) (horiPad * mRatio);
+    int mInnerHoriPad = 30, mInnervertPad = (int) (mInnerHoriPad * mRatio);
     int mHeight, mWidth;
     private final int TOP = 150;//dip
     //private int mOuterPadding=TOP;
     final int DEGREES = -90;
     String mText = "";
+    private Drawable mOverLayoutDrawable;
 
-    public OverlayView(Context context) {
+    public IDOverlayView(Context context) {
         this(context, null);
     }
 
-    public OverlayView(Context context, @Nullable AttributeSet attrs) {
+    public IDOverlayView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initAttrs(attrs);
 
@@ -55,34 +55,36 @@ public class OverlayView extends View {
 
     private void initAttrs(AttributeSet attrs) {
         TypedArray ta = getContext().obtainStyledAttributes(attrs,
-                R.styleable.OverlayView);
-        mStrikeLen = (int) ta.getDimension(R.styleable.OverlayView_strike_lenth, mStrikeLen);
-        mStrikeWidth = (int) ta.getDimension(R.styleable.OverlayView_strike_width, mStrikeWidth);
-        mColor = ta.getColor(R.styleable.OverlayView_strike_color, Color.GREEN);
-        mLineColor = ta.getColor(R.styleable.OverlayView_line_color, Color.GRAY);
-        mLineWidth = (int) ta.getDimension(R.styleable.OverlayView_line_width, mLineWidth);
-        mText = ta.getString(R.styleable.OverlayView_bottom_hint_text);
+                R.styleable.IDOverlayView);
+        mStrikeLen = (int) ta.getDimension(R.styleable.IDOverlayView_strike_lenth, mStrikeLen);
+        mStrikeWidth = (int) ta.getDimension(R.styleable.IDOverlayView_strike_width, mStrikeWidth);
+        mColor = ta.getColor(R.styleable.IDOverlayView_strike_color, Color.GREEN);
+        mLineColor = ta.getColor(R.styleable.IDOverlayView_line_color, Color.GRAY);
+        mLineWidth = (int) ta.getDimension(R.styleable.IDOverlayView_line_width, mLineWidth);
+        mText = ta.getString(R.styleable.IDOverlayView_bottom_hint_text);
+        mTransParentHeight= (int)ta.getDimension(R.styleable.IDOverlayView_trans_height,353);
+        mTransParentWidth= (int)ta.getDimension(R.styleable.IDOverlayView_trans_width,200);
         if (mText == null) {
             mText = "";
         }
+        mOverLayoutDrawable=ta.getDrawable(R.styleable.IDOverlayView_overlay_drawable);
+
         ta.recycle();
         initPaint();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-
-    }
+     public void setOverLayDrawable(Drawable drawable){
+         mOverLayoutDrawable=drawable;
+         invalidate();
+     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         mWidth = w;
         mHeight = h;
-        mTransParentWidth = w - getPaddingLeft() - getPaddingRight();
-        mTransParentHeight = (int) (mRatio * mTransParentWidth);
+//        mTransParentWidth = w - getPaddingLeft() - getPaddingRight();
+//        mTransParentHeight = (int) (mRatio * mTransParentWidth);
 
 
     }
@@ -109,17 +111,16 @@ public class OverlayView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Rect rect = new Rect();
-        getDrawingRect(rect);
+        Rect viewRect = new Rect(0,0,mWidth,mHeight);
 
         //根据剩余的宽高来计算不透明的边距
         int horizontalPadding = (mWidth - mTransParentWidth) / 2;
         int verticalPadding = (mHeight - mTransParentHeight) / 2;
 
-        int top = rect.top + verticalPadding;
-        int left = rect.left + horizontalPadding;
-        int right = rect.right - horizontalPadding;
-        int bottom = rect.bottom - verticalPadding;
+        int top = viewRect.top + verticalPadding;
+        int left = viewRect.left + horizontalPadding;
+        int right = viewRect.right - horizontalPadding;
+        int bottom = viewRect.bottom - verticalPadding;
 
         mTransParentRect = new Rect(left, top, right, bottom);
         Log.d(TAG, String.format("top=%s left=%s right=%s bottom=%s", top, left, right, bottom));
@@ -143,9 +144,11 @@ public class OverlayView extends View {
 
 
         // 画图
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.icon_background);
-        Rect dst = new Rect(left + horiPad, top + verticalPad, right - horiPad, bottom - verticalPad);
-        canvas.drawBitmap(rotateBitmap(bitmap, DEGREES), null, dst, null);
+        Bitmap bitmap = drawableToBitmap(mOverLayoutDrawable);
+        if(bitmap!=null) {
+            Rect dst = new Rect(left + mInnerHoriPad, top + mInnervertPad, right - mInnerHoriPad, bottom - mInnervertPad);
+            canvas.drawBitmap(rotateBitmap(bitmap, DEGREES), null, dst, null);
+        }
 
         //画字,旋转-90度
         String text = mText;

@@ -19,7 +19,7 @@ import com.jiandan.terence.firstdraglayout.flappyBird.FlappyBirdView;
 
 public class MainActivity extends AppCompatActivity {
     RotateSensorManager mRotationSensor;
-    OverlayView mOverlayView;
+    IDOverlayView mOverlayView;
     private String TAG = "RotateMainActivity";
     ViewGroup.LayoutParams mLayoutParams;
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_main3);
+        setContentView(R.layout.activity_main6);
       //  setContentView(new Panel(this));
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-        mOverlayView = (OverlayView) findViewById(R.id.overlay);
+        mOverlayView = (IDOverlayView) findViewById(R.id.overlay);
         if(mOverlayView!=null) {
             mOverlayView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             mLayoutParams = mOverlayView.getLayoutParams();
@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
        // TimerGridView pixelGrid = (TimerGridView) findViewById(R.id.timer_view);
        // pixelGrid.startPlay();
         FlappyBirdView flappyBirdView=new FlappyBirdView(this);
-      //  setContentView(new OverlayView(this));
-
+      //  setContentView(flappyBirdView);
+        ((VideoOverlayView)findViewById(R.id.video_overlay)).startTimer();
     }
 
     AnimatorSet mAnimatorSet = new AnimatorSet();

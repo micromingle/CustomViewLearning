@@ -42,12 +42,12 @@ public class OverlayView2 extends AppCompatImageView {
 
     private void initAttrs(AttributeSet attrs) {
         TypedArray ta = getContext().obtainStyledAttributes(attrs,
-                R.styleable.OverlayView);
-        mLen = (int) ta.getDimension(R.styleable.OverlayView_strike_lenth, mLen);
-        mStrikeWidth = (int) ta.getDimension(R.styleable.OverlayView_strike_width, mStrikeWidth);
-        mColor = ta.getColor(R.styleable.OverlayView_strike_color, Color.GREEN);
-        mLineColor = ta.getColor(R.styleable.OverlayView_line_color, Color.GRAY);
-        mLineWidth = (int) ta.getDimension(R.styleable.OverlayView_line_width, mLineWidth);
+                R.styleable.IDOverlayView);
+        mLen = (int) ta.getDimension(R.styleable.IDOverlayView_strike_lenth, mLen);
+        mStrikeWidth = (int) ta.getDimension(R.styleable.IDOverlayView_strike_width, mStrikeWidth);
+        mColor = ta.getColor(R.styleable.IDOverlayView_strike_color, Color.GREEN);
+        mLineColor = ta.getColor(R.styleable.IDOverlayView_line_color, Color.GRAY);
+        mLineWidth = (int) ta.getDimension(R.styleable.IDOverlayView_line_width, mLineWidth);
 
         ta.recycle();
         initPaint();

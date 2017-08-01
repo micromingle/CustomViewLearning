@@ -11,13 +11,14 @@
     <com.jiandan.terence.firstdraglayout.HandOverlayView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="30dp"
         android:paddingTop="25dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingBottom="40dp"
+        android:paddingBottom="78dp"
         android:layout_gravity="center"
         android:layout_centerInParent="true"
-        custom:hint_text="are you going to do this"
+        custom:hint_text="are you going to do this this this\n going to do this this this "
         custom:text_color="@android:color/white"
         custom:rect_radis="12dp"
         />

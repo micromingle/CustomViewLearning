@@ -37,6 +37,7 @@ public class VideoOverlayView extends View {
     Rect mTransParentRect;//透明的区域矩形
     private boolean isForeGroundDrew = false;
     Canvas mCanvas;
+    private int mHeight,mWidth;
 
 
     public VideoOverlayView(Context context) {
@@ -57,17 +58,16 @@ public class VideoOverlayView extends View {
         mRadius = (int) ta.getDimension(R.styleable.VideoOverlayView_outer_radis, TypedValue.applyDimension(COMPLEX_UNIT_DIP, 16,
                 getResources().getDisplayMetrics()));
         mBottomText = ta.getString(R.styleable.VideoOverlayView_bottom_text);
+        if(mBottomText==null){
+            mBottomText="00:00";
+        }
         mBottomTextColor = ta.getColor(R.styleable.VideoOverlayView_bottom_text_color, Color.WHITE);
         Log.d(TAG, String.format("read text %s", mTopText));
         ta.recycle();
         initPaint();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-    }
 
     private void initPaint() {
         mTopTextPaint = new Paint();
@@ -89,12 +89,17 @@ public class VideoOverlayView extends View {
     }
 
     @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mHeight=h;
+        mWidth=w;
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mCanvas=canvas;
-        Rect rect = new Rect();
-        getDrawingRect(rect);
-
+        Rect rect = new Rect(0,0,mWidth,mHeight);
         int top = rect.top + getPaddingTop();
         int left = rect.left + getPaddingLeft();
         int right = rect.right - getPaddingRight();
@@ -108,7 +113,7 @@ public class VideoOverlayView extends View {
 
         //画顶部的字
         String topText = mTopText == null ? "" : mTopText;
-        Log.d(TAG, String.format("text to draw %s", mTopText));
+        Log.d(TAG, String.format("text to draw %s", topText));
         float textWidth = mTopTextPaint.measureText(topText);
         Paint.FontMetrics fm = mTopTextPaint.getFontMetrics();
         float textHeight = fm.descent - fm.ascent;
@@ -119,7 +124,7 @@ public class VideoOverlayView extends View {
         canvas.drawText(topText, mTransParentRect.left + horidelta, veridelta, mTopTextPaint);
 
         //画底部的字
-         setBottomText(mBottomText);
+         setBottomText(getDurationText());
         //画背景
         if (!isForeGroundDrew) {
             drawForeground();
@@ -175,8 +180,9 @@ public class VideoOverlayView extends View {
     Runnable mTimerRunnable=new Runnable() {
         @Override
         public void run() {
-           setBottomText(getDurationText());
-           postDelayed(this,1000);
+           //setBottomText(getDurationText());
+            invalidate();
+            postDelayed(this,1000);
         }
     };
    // private int mDuration=0;
@@ -193,7 +199,12 @@ public class VideoOverlayView extends View {
         resetTimer();
     }
     private void resetTimer() {
-        setBottomText("00:00");
+        post(new Runnable() {
+            @Override
+            public void run() {
+              //  setBottomText("00:00");
+            }
+        });
     }
     private String getDurationText(){
         String mText,sText;
@@ -215,17 +226,24 @@ public class VideoOverlayView extends View {
     }
 
     private void setBottomText(String text){
-        String bottomText = text == null ? "" : text;
-        Log.d(TAG, String.format("text to draw %s", bottomText));
-        mTopTextPaint.setTextSize(TypedValue.applyDimension(COMPLEX_UNIT_SP, 13, getResources().getDisplayMetrics()));
-        float textWidth = mBottomTextPaint.measureText(bottomText);
-        Paint.FontMetrics fm = mBottomTextPaint.getFontMetrics();
-        float textHeight = fm.descent - fm.ascent;
-        Log.d(TAG, String.format("textWidth %s textHeight %s padding bottom  %s", textWidth, textHeight, getPaddingBottom()));
-        float rectWidth = mTransParentRect.right - mTransParentRect.left;
-        float horidelta = (rectWidth - textWidth) / 2;//宽度剩余空间
-        float veridelta = mTransParentRect.bottom - 15;//高度
-        mCanvas.drawText(bottomText, mTransParentRect.left + horidelta, veridelta, mBottomTextPaint);
+        try {
+            if(mTransParentRect==null){
+                return;
+            }
+            String bottomText = text == null ? "" : text;
+            Log.d(TAG, String.format("text to draw %s", bottomText));
+            mTopTextPaint.setTextSize(TypedValue.applyDimension(COMPLEX_UNIT_SP, 13, getResources().getDisplayMetrics()));
+            float textWidth = mBottomTextPaint.measureText(bottomText);
+            Paint.FontMetrics fm = mBottomTextPaint.getFontMetrics();
+            float textHeight = fm.descent - fm.ascent;
+            Log.d(TAG, String.format("textWidth %s textHeight %s padding bottom  %s", textWidth, textHeight, getPaddingBottom()));
+            float rectWidth = mTransParentRect.right - mTransParentRect.left;
+            float horidelta = (rectWidth - textWidth) / 2;//宽度剩余空间
+            float veridelta = mTransParentRect.bottom - 15;//高度
+            mCanvas.drawText(bottomText, mTransParentRect.left + horidelta, veridelta, mBottomTextPaint);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -15,6 +15,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -29,11 +32,13 @@ import static android.util.TypedValue.COMPLEX_UNIT_SP;
 public class HandOverlayView extends View {
     private String TAG = "OverlayView";
     int mTextColor;
-    Paint mTextPaint,mRectPaint;
+    Paint mRectPaint;
+    TextPaint mTextPaint;
     String mText;
     int mRadius;
     Rect mTransParentRect;//透明的区域矩形
     private boolean isForeGroundDrew = false;
+    private int mWidth,mHeight;
 
 
     public HandOverlayView(Context context) {
@@ -58,14 +63,17 @@ public class HandOverlayView extends View {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec,heightMeasureSpec);
-
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mWidth=w;
+        mHeight=h;
     }
 
     private void initPaint() {
-        mTextPaint = new Paint();
+        mTextPaint = new TextPaint();
         mTextPaint.setColor(mTextColor);
+        mTextPaint.setTextSize(TypedValue.applyDimension(COMPLEX_UNIT_SP,13,getResources().getDisplayMetrics()));
+
         mRectPaint=new Paint();
         mRectPaint.setColor(Color.WHITE);
         mRectPaint.setStrokeWidth(2);
@@ -76,8 +84,8 @@ public class HandOverlayView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Rect rect = new Rect();
-        getDrawingRect(rect);
+        Rect rect = new Rect(0,0,mWidth,mHeight);
+
 
         int top = rect.top + getPaddingTop();
         int left = rect.left + getPaddingLeft();
@@ -91,17 +99,19 @@ public class HandOverlayView extends View {
         canvas.drawRoundRect(rectF,mRadius,mRadius, mRectPaint);
 
         //画字
-        String text=mText==null?"":mText;
-        Log.d(TAG, String.format("text to draw %s",mText));
-        mTextPaint.setTextSize(TypedValue.applyDimension(COMPLEX_UNIT_SP,13,getResources().getDisplayMetrics()));
-        float textWidth= mTextPaint.measureText(text);
-        Paint.FontMetrics fm = mTextPaint.getFontMetrics();
-        float textHeight = fm.descent - fm.ascent;
-        Log.d(TAG, String.format("textWidth %s textHeight %s padding bottom  %s", textWidth,textHeight,getPaddingBottom()));
+        StaticLayout textLayout = new StaticLayout(mText, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
         int rectWidth=mTransParentRect.right-mTransParentRect.left;
+        float textWidth=textLayout.getWidth();
+        float textHeight=textLayout.getHeight();
         float horidelta=(rectWidth-textWidth)/2;//宽度剩余空间
-        float veridelta=(getPaddingBottom())/2+textHeight/4;//高度剩余空间
-        canvas.drawText(text,mTransParentRect.left+horidelta,mTransParentRect.bottom+veridelta, mTextPaint);
+        float veridelta=(getPaddingBottom()-textHeight)/2;//高度剩余空间
+        float textX=mTransParentRect.left+horidelta;
+        float textY=mTransParentRect.bottom+veridelta;
+        Log.d(TAG, String.format("textWidth %s textHeight %s padding bottom  %s", textWidth,textHeight,getPaddingBottom()));
+        canvas.save();
+        canvas.translate(textX, textY);
+        textLayout.draw(canvas);
+        canvas.restore();
         //画背景
         if (!isForeGroundDrew) {
             drawForeground();
