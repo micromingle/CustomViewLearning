@@ -3,6 +3,7 @@ package com.jiandan.terence.firstdraglayout;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -62,21 +63,21 @@ public class IDOverlayView extends View {
         mLineColor = ta.getColor(R.styleable.IDOverlayView_line_color, Color.GRAY);
         mLineWidth = (int) ta.getDimension(R.styleable.IDOverlayView_line_width, mLineWidth);
         mText = ta.getString(R.styleable.IDOverlayView_bottom_hint_text);
-        mTransParentHeight= (int)ta.getDimension(R.styleable.IDOverlayView_trans_height,353);
-        mTransParentWidth= (int)ta.getDimension(R.styleable.IDOverlayView_trans_width,200);
+        mTransParentHeight = (int) ta.getDimension(R.styleable.IDOverlayView_trans_height, 353);
+        mTransParentWidth = (int) ta.getDimension(R.styleable.IDOverlayView_trans_width, 200);
         if (mText == null) {
             mText = "";
         }
-        mOverLayoutDrawable=ta.getDrawable(R.styleable.IDOverlayView_overlay_drawable);
+        mOverLayoutDrawable = ta.getDrawable(R.styleable.IDOverlayView_overlay_drawable);
 
         ta.recycle();
         initPaint();
     }
 
-     public void setOverLayDrawable(Drawable drawable){
-         mOverLayoutDrawable=drawable;
-         invalidate();
-     }
+    public void setOverLayDrawable(Drawable drawable) {
+        mOverLayoutDrawable = drawable;
+        invalidate();
+    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -111,7 +112,7 @@ public class IDOverlayView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Rect viewRect = new Rect(0,0,mWidth,mHeight);
+        Rect viewRect = new Rect(0, 0, mWidth, mHeight);
 
         //根据剩余的宽高来计算不透明的边距
         int horizontalPadding = (mWidth - mTransParentWidth) / 2;
@@ -145,7 +146,7 @@ public class IDOverlayView extends View {
 
         // 画图
         Bitmap bitmap = drawableToBitmap(mOverLayoutDrawable);
-        if(bitmap!=null) {
+        if (bitmap != null) {
             Rect dst = new Rect(left + mInnerHoriPad, top + mInnervertPad, right - mInnerHoriPad, bottom - mInnervertPad);
             canvas.drawBitmap(rotateBitmap(bitmap, DEGREES), null, dst, null);
         }
@@ -156,8 +157,8 @@ public class IDOverlayView extends View {
         Paint.FontMetrics fm = mTextPaint.getFontMetrics();
         float textHeight = fm.descent - fm.ascent;
         Log.d(TAG, String.format("textWidth %s textHeight %s padding bottom  %s", textWidth, textHeight, getPaddingBottom()));
-        float startX = mTransParentRect.right + horizontalPadding / 2+textHeight/4;
-        float startY = mTransParentRect.bottom-(mTransParentHeight/2-textWidth/2);
+        float startX = mTransParentRect.right + horizontalPadding / 2 + textHeight / 4;
+        float startY = mTransParentRect.bottom - (mTransParentHeight / 2 - textWidth / 2);
         canvas.save();
         canvas.rotate(DEGREES, startX, startY);
         canvas.drawText(mText, startX,
@@ -168,6 +169,7 @@ public class IDOverlayView extends View {
         if (!isForeGroundDrew) {
             drawForeground();
             isForeGroundDrew = true;
+           // punchAHoleInABitmap2(canvas);
         }
     }
 
@@ -211,10 +213,29 @@ public class IDOverlayView extends View {
         return bitmap;
     }
 
+    private void punchAHoleInABitmap2(Canvas canvas) {
+        //     Log.d(TAG, String.format(" foreground width %s  height %s", foreground.getWidth(), foreground.getHeight()));
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setAntiAlias(true);
+       // paint.setColor(getResources().getColor(R.color.semi_transparent));
+        Rect viewRect = new Rect(0, 0, mWidth, mHeight);
+        canvas.drawRect(viewRect, paint);
+        Paint paint1 = new Paint();
+        paint1.setStyle(Paint.Style.STROKE);
+        paint1.setAntiAlias(true);
+        paint1.setColor(getResources().getColor(R.color.transparent));
+        //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        canvas.drawRect(mTransParentRect, paint1);
+        //   return bitmap;
+    }
+
 
     private void drawForeground() {
         Drawable fdrawable = getResources().getDrawable(R.drawable.semi_transparent);
         Bitmap fBitmap = drawableToBitmap(fdrawable);
+        ;
+        Log.d(TAG, String.format(" bitmap size %s", (fBitmap.getByteCount() / 1024)));
         fBitmap = punchAHoleInABitmap(fBitmap);
         Drawable d = new BitmapDrawable(getResources(), fBitmap);
         setBackgroundDrawable(d);

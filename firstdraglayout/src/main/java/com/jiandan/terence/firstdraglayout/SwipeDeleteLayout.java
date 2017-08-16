@@ -24,10 +24,10 @@ public class SwipeDeleteLayout extends ViewGroup {
     private int mTouchSlop;
     private int mMaximumVelocity, mMinimumVelocity;
 
-    private float mLastX,mDownX;
+    private float mLastX, mDownX;
 
-    private View mLeftView,mRightView;
-    private String TAG="SwipeDeleteLayout";
+    private View mLeftView, mRightView;
+    private String TAG = "SwipeDeleteLayout";
     private int mLeftBorder, mRightBorder;
     private boolean isRightViewShow;
 
@@ -45,70 +45,88 @@ public class SwipeDeleteLayout extends ViewGroup {
                 .getScaledMaximumFlingVelocity();
         mMinimumVelocity = ViewConfiguration.get(context)
                 .getScaledMinimumFlingVelocity();
-        Log.d(TAG,String.format("touch slop %s", mTouchSlop));
+        Log.d(TAG, String.format("touch slop %s", mTouchSlop));
 
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int count=getChildCount();
-        for(int i=0;i<count;i++){
-            View view=getChildAt(i);
-            measureChild(view,widthMeasureSpec,heightMeasureSpec);
+        int count = getChildCount();
+        int width = 0;
+        for (int i = 0; i < count; i++) {
+            View view = getChildAt(i);
+            measureChild(view, widthMeasureSpec, heightMeasureSpec);
+            width +=view.getMeasuredWidth();
+
         }
+        Log.d(TAG, "width =" + width);
+//        int height = 0;
+//        int width=0;
+//        for (int i = 0; i < count; i++) {
+//            View view = getChildAt(i);
+//            measureChild(view, widthMeasureSpec, heightMeasureSpec);
+//            SwipeLayoutParam layoutParam = (SwipeLayoutParam) view.getLayoutParams();
+//            int cHeight = view.getMeasuredHeight() + layoutParam.topMargin + layoutParam.bottomMargin;
+//            width+=view.getMeasuredWidth();
+//            if (cHeight > height) {
+//                height = cHeight;
+//            }
+//        }
+//        Log.d(TAG,"max Height="+height);
+//        setMeasuredDimension(width, height);
+        // setMeasuredDimension();
+      //  setMeasuredDimension(1080, 200);
     }
+
     //横向排列
     //为特殊需求写的自定义view,不具有普适性，请慎用
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-             if(changed){
-                 int count=getChildCount();
-                 int left=getPaddingLeft();
-                 for(int i=0;i<count;i++){
-                     View view=getChildAt(i);
-                     SwipeLayoutParam layoutParam=(SwipeLayoutParam)view.getLayoutParams();
-                      left=left+layoutParam.leftMargin;
-                     int right=left+view.getMeasuredWidth()+layoutParam.rightMargin;
-                     int top=layoutParam.topMargin;
-                     int bottom=top+view.getMeasuredHeight()+layoutParam.bottomMargin;
-                     Log.d(TAG, String.format("onlayout left  %s right  %s top %s bottom %s", left, right,top,bottom));
-                     view.layout(left,top,right,bottom);
-                     left=right;
+        if (changed) {
+            int count = getChildCount();
+            int left = getPaddingLeft();
+            for (int i = 0; i < count; i++) {
+                View view = getChildAt(i);
+                SwipeLayoutParam layoutParam = (SwipeLayoutParam) view.getLayoutParams();
+                left = left + layoutParam.leftMargin;
+                int right = left + view.getMeasuredWidth() + layoutParam.rightMargin;
+                int top = layoutParam.topMargin;
+                int bottom = top + view.getMeasuredHeight() + layoutParam.bottomMargin;
+                Log.d(TAG, String.format("onlayout left  %s right  %s top %s bottom %s", left, right, top, bottom));
+                view.layout(left, top, right, bottom);
+                left = right;
 
-                 }
-             }
-         mLeftBorder = getChildAt(0).getLeft();
+            }
+        }
+        mLeftBorder = getChildAt(0).getLeft();
         mRightBorder = getChildAt(getChildCount() - 1).getRight();
 
-        Log.d(TAG,String.format("left border %s right border %s", mLeftBorder, mRightBorder));
+        Log.d(TAG, String.format("left border %s right border %s", mLeftBorder, mRightBorder));
     }
 
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mLeftView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        // mLeftView.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
 
     }
-
 
 
     @Override
-    protected void onFinishInflate()
-    {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         mLeftView = findViewById(R.id.id_item_left);
         mRightView = findViewById(R.id.id_item_right);
-        if(mLeftView==null){
+        if (mLeftView == null) {
             throw new IllegalArgumentException("id item left not found");
         }
 
-        if(mRightView==null){
+        if (mRightView == null) {
             throw new IllegalArgumentException("id item right not found");
         }
     }
-
 
 
     /*核心要点：action_down 的时候一定要记录位置*/
@@ -118,7 +136,7 @@ public class SwipeDeleteLayout extends ViewGroup {
         Log.d(TAG, "onInterceptTouchEvent");
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, " ACTION_DOWN" );
+                Log.d(TAG, " ACTION_DOWN");
                 mDownX = ev.getX();
                 mLastX = mDownX;
                 break;
@@ -137,7 +155,6 @@ public class SwipeDeleteLayout extends ViewGroup {
         }
         return super.onInterceptTouchEvent(ev);
     }
-
 
 
     @Override
@@ -163,48 +180,48 @@ public class SwipeDeleteLayout extends ViewGroup {
                     scrollTo(mRightBorder - getWidth(), 0);
                     return true;
                 }
-                scrollBy((int)dif,0);
-                Log.d(TAG, "ACTION_MOVE dif="+dif);
+                scrollBy((int) dif, 0);
+                Log.d(TAG, "ACTION_MOVE dif=" + dif);
 
                 break;
             case MotionEvent.ACTION_UP:
                 mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
                 int velocityX = (int) mVelocityTracker.getXVelocity();
-                Log.d(TAG, "ACTION_UP velocityX="+velocityX);
-                Log.d(TAG, "ACTION_UP scroll x="+getScrollX());
+                Log.d(TAG, "ACTION_UP velocityX=" + velocityX);
+                Log.d(TAG, "ACTION_UP scroll x=" + getScrollX());
 
                 //需要判断方向
                 if (Math.abs(velocityX) > mMinimumVelocity) {
-                    int left=mRightView.getWidth()-getScrollX();
-                    Log.d(TAG, "ACTION_UP fling showing ="+isRightViewShow);
+                    int left = mRightView.getWidth() - getScrollX();
+                    Log.d(TAG, "ACTION_UP fling showing =" + isRightViewShow);
                     if (velocityX >= 0) {
                         //向右滑
-                        if(isRightViewShow) {
+                        if (isRightViewShow) {
                             mScroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
                             invalidate();
-                            isRightViewShow=false;
+                            isRightViewShow = false;
                         }
                     } else {
                         //向左滑
-                        if(!isRightViewShow) {
-                            mScroller.startScroll(getScrollX(), 0,left, 0);
+                        if (!isRightViewShow) {
+                            mScroller.startScroll(getScrollX(), 0, left, 0);
                             invalidate();
-                            isRightViewShow=true;
+                            isRightViewShow = true;
                         }
                     }
 
-                }else{
+                } else {
                     Log.d(TAG, "ACTION_UP scroll");
                     // 当手指抬起时，根据当前的滚动值来判定应该滚动到哪个子控件的界面
-                    int left=mRightView.getWidth()-getScrollX();
-                    if(left<mRightView.getWidth()/2){
+                    int left = mRightView.getWidth() - getScrollX();
+                    if (left < mRightView.getWidth() / 2) {
                         mScroller.startScroll(getScrollX(), 0, left, 0);
                         invalidate();
-                        isRightViewShow=true;
-                    }else{
+                        isRightViewShow = true;
+                    } else {
                         mScroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
                         invalidate();
-                        isRightViewShow=false;
+                        isRightViewShow = false;
 
                     }
                 }
@@ -216,7 +233,7 @@ public class SwipeDeleteLayout extends ViewGroup {
         return super.onTouchEvent(ev);
     }
 
-    public static class SwipeLayoutParam extends MarginLayoutParams{
+    public static class SwipeLayoutParam extends MarginLayoutParams {
 
         public SwipeLayoutParam(Context c, AttributeSet attrs) {
             super(c, attrs);
@@ -242,19 +259,19 @@ public class SwipeDeleteLayout extends ViewGroup {
 
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
-        return new SwipeLayoutParam(getContext(),attrs);
+        return new SwipeLayoutParam(getContext(), attrs);
     }
 
     @Override
     protected boolean checkLayoutParams(LayoutParams p) {
-        return super.checkLayoutParams(p)&&(p instanceof SwipeLayoutParam);
+        return super.checkLayoutParams(p) && (p instanceof SwipeLayoutParam);
     }
 
     @Override
     public void computeScroll() {
-      if(mScroller.computeScrollOffset()){
-          scrollTo(mScroller.getCurrX(),mScroller.getCurrY());
-          invalidate();
-      }
+        if (mScroller.computeScrollOffset()) {
+            scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
+            invalidate();
+        }
     }
 }

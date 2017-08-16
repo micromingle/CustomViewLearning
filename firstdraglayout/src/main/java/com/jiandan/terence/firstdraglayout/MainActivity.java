@@ -4,9 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -27,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_main6);
+        setContentView(R.layout.activity_main2);
       //  setContentView(new Panel(this));
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -63,13 +66,27 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+          //  mRotationSensor.start();
+            findViewById(R.id.press_me).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int orientation=getResources().getConfiguration().orientation;
+                    Log.d(TAG,"orientation ="+orientation);
+                }
+            });
         }
         //  findViewById(R.id.overlay).setRotation(-90);
-       // TimerGridView pixelGrid = (TimerGridView) findViewById(R.id.timer_view);
+      //  TimerGridView pixelGrid = (TimerGridView) findViewById(R.id.timer_view);
        // pixelGrid.startPlay();
-        FlappyBirdView flappyBirdView=new FlappyBirdView(this);
+        //FlappyBirdView flappyBirdView=new FlappyBirdView(this);
       //  setContentView(flappyBirdView);
-        ((VideoOverlayView)findViewById(R.id.video_overlay)).startTimer();
+     //   ((VideoOverlayView)findViewById(R.id.video_overlay)).startTimer();
+//        pixelGrid.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getScreenOrientation();
+//            }
+//        });
     }
 
     AnimatorSet mAnimatorSet = new AnimatorSet();
@@ -109,8 +126,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mAnimatorSet.start();
+
+
     }
 
+    private void getScreenOrientation(){
+        Display display = ((WindowManager)
+                getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        int screenOrientation = display.getRotation();//必须要支持自动旋转才可以
+
+        int degrees=getResources().getConfiguration().orientation;;
+        switch (screenOrientation) {
+
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+            default:
+        }
+        Log.d(TAG,"degrees main ="+degrees);
+    }
     @Override
     protected void onResume() {
         super.onResume();

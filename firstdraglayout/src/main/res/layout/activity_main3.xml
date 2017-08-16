@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:background="@color/colorAccent"
     android:layout_height="match_parent"
-    >
+    android:background="@color/colorAccent"
+    android:orientation="vertical">
 
-    <LinearLayout android:layout_height="50dp"
+    <!--<LinearLayout android:layout_height="50dp"
         android:layout_width="match_parent"
         android:id="@+id/layout"
         android:orientation="horizontal"/>
@@ -16,27 +14,31 @@
         android:layout_width="match_parent"
         android:id="@+id/layout2"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"/>-->
 
-   <com.jiandan.terence.firstdraglayout.IDOverlayView
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:layout_below="@+id/layout"
-       android:layout_marginRight="20dp"
-       android:layout_marginLeft="20dp"
-       android:layout_above="@+id/layout2"
-       android:id="@+id/overlay"
-       android:layout_centerInParent="true"
-       custom:trans_width="200dp"
-       custom:trans_height="346dp"
-       custom:strike_color="#16b015"
-       custom:strike_lenth="10dp"
-       custom:strike_width="3dp"
-       custom:line_color="@android:color/white"
-       custom:line_width="1px"
-       custom:overlay_drawable="@drawable/icon_background"
-       custom:bottom_hint_text="are you going to do this in me"/>
+    <com.jiandan.terence.firstdraglayout.IDOverlayView
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        custom:bottom_hint_text="are you going to do this in me"
+        custom:line_color="@android:color/white"
+        custom:line_width="1px"
+        custom:overlay_drawable="@drawable/icon_background"
+        custom:strike_color="#16b015"
+        custom:strike_lenth="10dp"
+        custom:strike_width="3dp"
+        custom:trans_height="346dp"
+        custom:trans_width="200dp" />
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/press_me"
+        android:gravity="center"
+        android:text="Click Me"
+        android:layout_height="50dp"/>
 
 
-
+    <!--  /-->
 </RelativeLayout>
