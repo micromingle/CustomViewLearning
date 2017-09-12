@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.jiandan.terence.firstdraglayout.R;
 
@@ -72,9 +73,15 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public static class ViewHolder2 extends RecyclerView.ViewHolder{
         public ViewPager mViewPager;
-        public ViewHolder2(View itemView) {
+        public ViewHolder2(final View itemView) {
             super(itemView);
           //  mViewPager=(ViewPager)itemView.findViewById(R.id.view_pager);
+            itemView.findViewById(R.id.id_item_left).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(itemView.getContext(),R.string.app_name,Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 }

@@ -20,6 +20,7 @@ public class CustomLayout extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         return true;
     }
 }

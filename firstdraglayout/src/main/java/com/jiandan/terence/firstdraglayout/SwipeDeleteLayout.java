@@ -53,14 +53,14 @@ public class SwipeDeleteLayout extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int count = getChildCount();
-        int width = 0;
+        //int width = 0;
         for (int i = 0; i < count; i++) {
             View view = getChildAt(i);
             measureChild(view, widthMeasureSpec, heightMeasureSpec);
-            width +=view.getMeasuredWidth();
+            //width +=view.getMeasuredWidth();
 
         }
-        Log.d(TAG, "width =" + width);
+      //  Log.d(TAG, "width =" + width);
 //        int height = 0;
 //        int width=0;
 //        for (int i = 0; i < count; i++) {
@@ -83,7 +83,8 @@ public class SwipeDeleteLayout extends ViewGroup {
     //为特殊需求写的自定义view,不具有普适性，请慎用
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (changed) {
+        //千万不要判断changed 坑人啊
+        //if (changed) {
             int count = getChildCount();
             int left = getPaddingLeft();
             for (int i = 0; i < count; i++) {
@@ -98,7 +99,7 @@ public class SwipeDeleteLayout extends ViewGroup {
                 left = right;
 
             }
-        }
+       // }
         mLeftBorder = getChildAt(0).getLeft();
         mRightBorder = getChildAt(getChildCount() - 1).getRight();
 
@@ -132,24 +133,30 @@ public class SwipeDeleteLayout extends ViewGroup {
     /*核心要点：action_down 的时候一定要记录位置*/
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        int action = ev.getAction();
+        int action = ev.getActionMasked();
         Log.d(TAG, "onInterceptTouchEvent");
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, " ACTION_DOWN");
+                Log.d(TAG, " onInterceptTouchEvent ACTION_DOWN");
                 mDownX = ev.getX();
                 mLastX = mDownX;
+              //  return true;
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d(TAG, "ACTION_MOVE");
+                Log.d(TAG, "onInterceptTouchEvent ACTION_MOVE");
                 float curX = ev.getX();
                 float dif = mDownX - curX;
                 mLastX = curX;
                 if (Math.abs(dif) > mTouchSlop) {
-                    Log.d(TAG, "ACTION_MOVE intercepted");
+                    Log.d(TAG, "onInterceptTouchEvent ACTION_MOVE intercepted");
                     return true;
                 }
                 break;
+            case MotionEvent.ACTION_UP:
+                Log.d(TAG, "onInterceptTouchEvent ACTION_UP");
+                break;
+             case MotionEvent.ACTION_CANCEL:
+                Log.d(TAG, "onInterceptTouchEvent ACTION_CANCEL");
             default:
 
         }
@@ -160,11 +167,11 @@ public class SwipeDeleteLayout extends ViewGroup {
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         mVelocityTracker.addMovement(ev);
-        int action = ev.getAction();
+        int action = ev.getActionMasked();
         Log.d(TAG, "onTouchEvent");
         switch (action) {
             case MotionEvent.ACTION_MOVE:
-                Log.d(TAG, "ACTION_MOVE");
+                Log.d(TAG, "onTouchEvent ACTION_MOVE");
                 if (!mScroller.isFinished())
                     mScroller.abortAnimation();
 
@@ -173,64 +180,73 @@ public class SwipeDeleteLayout extends ViewGroup {
                 float curX = ev.getX();
                 float dif = mLastX - curX;
                 mLastX = curX;
+                //不让越过左边界
                 if (getScrollX() + dif < mLeftBorder) {
                     scrollTo(mLeftBorder, 0);
                     return true;
+                    //不让越过右边界
                 } else if (getScrollX() + dif + getWidth() > mRightBorder) {
                     scrollTo(mRightBorder - getWidth(), 0);
                     return true;
                 }
                 scrollBy((int) dif, 0);
-                Log.d(TAG, "ACTION_MOVE dif=" + dif);
+                Log.d(TAG, "onTouchEvent ACTION_MOVE dif=" + dif);
 
                 break;
             case MotionEvent.ACTION_UP:
-                mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                int velocityX = (int) mVelocityTracker.getXVelocity();
-                Log.d(TAG, "ACTION_UP velocityX=" + velocityX);
-                Log.d(TAG, "ACTION_UP scroll x=" + getScrollX());
-
-                //需要判断方向
-                if (Math.abs(velocityX) > mMinimumVelocity) {
-                    int left = mRightView.getWidth() - getScrollX();
-                    Log.d(TAG, "ACTION_UP fling showing =" + isRightViewShow);
-                    if (velocityX >= 0) {
-                        //向右滑
-                        if (isRightViewShow) {
-                            mScroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
-                            invalidate();
-                            isRightViewShow = false;
-                        }
-                    } else {
-                        //向左滑
-                        if (!isRightViewShow) {
-                            mScroller.startScroll(getScrollX(), 0, left, 0);
-                            invalidate();
-                            isRightViewShow = true;
-                        }
-                    }
-
-                } else {
-                    Log.d(TAG, "ACTION_UP scroll");
-                    // 当手指抬起时，根据当前的滚动值来判定应该滚动到哪个子控件的界面
-                    int left = mRightView.getWidth() - getScrollX();
-                    if (left < mRightView.getWidth() / 2) {
-                        mScroller.startScroll(getScrollX(), 0, left, 0);
-                        invalidate();
-                        isRightViewShow = true;
-                    } else {
-                        mScroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
-                        invalidate();
-                        isRightViewShow = false;
-
-                    }
-                }
-                mVelocityTracker.clear();
+                Log.d(TAG, "onTouchEvent  ACTION_UP");
+                handleActionUpOrCancel();
                 break;
+            case MotionEvent.ACTION_CANCEL:
+                Log.d(TAG, "onTouchEvent ACTION_CANCEL");
+                handleActionUpOrCancel();
             default:
 
         }
         return super.onTouchEvent(ev);
+    }
+
+    private void handleActionUpOrCancel(){
+        mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+        int velocityX = (int) mVelocityTracker.getXVelocity();
+        Log.d(TAG, "onTouchEvent  velocityX=" + velocityX);
+        Log.d(TAG, "onTouchEvent  scroll x=" + getScrollX());
+        //需要判断方向
+        if (Math.abs(velocityX) > mMinimumVelocity) {
+            int left = mRightView.getWidth() - getScrollX();
+            Log.d(TAG, "onTouchEvent  fling showing =" + isRightViewShow);
+            if (velocityX >= 0) {
+                //向右滑
+                if (isRightViewShow) {
+                    mScroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
+                    invalidate();
+                    isRightViewShow = false;
+                }
+            } else {
+                //向左滑
+                if (!isRightViewShow) {
+                    mScroller.startScroll(getScrollX(), 0, left, 0);
+                    invalidate();
+                    isRightViewShow = true;
+                }
+            }
+
+        } else {
+            Log.d(TAG, "onTouchEvent  scroll");
+            // 当手指抬起时，根据当前的滚动值来判定应该滚动到哪个子控件的界面
+            int left = mRightView.getWidth() - getScrollX();
+            if (left < mRightView.getWidth() / 2) {
+                mScroller.startScroll(getScrollX(), 0, left, 0);
+                invalidate();
+                isRightViewShow = true;
+            } else {
+                mScroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
+                invalidate();
+                isRightViewShow = false;
+
+            }
+        }
+        mVelocityTracker.clear();
     }
 
     public static class SwipeLayoutParam extends MarginLayoutParams {
