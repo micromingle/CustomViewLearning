@@ -26,55 +26,61 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "RotateMainActivity";
     ViewGroup.LayoutParams mLayoutParams;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_main2);
-      //  setContentView(new Panel(this));
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        TextView textView = (TextView) findViewById(R.id.tv_text);
-        if (textView != null) {
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "clicking me", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-        mOverlayView = (IDOverlayView) findViewById(R.id.overlay);
-        if(mOverlayView!=null) {
-            mOverlayView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            mLayoutParams = mOverlayView.getLayoutParams();
-            mRotationSensor = new RotateSensorManager(this);
-          //  rotateAndScaleView(-90);
-            mRotationSensor.setRotateCallBack(new RotateSensorManager.RotationCallBack() {
-                @Override
-                public void onRotate(float rotation) {
-                    Log.d(TAG, "rotation actual degree=" + String.valueOf(rotation));
-                    int rot = (int) rotation;
-                    if (mOverlayView != null) {
-                        if (225 < rot && rot <= 315) {
-                            rotateAndScaleView(-90);
-                            Log.d(TAG, "rotation degree 270");
-                        } else {
-                            Log.d(TAG, "rotation degree 90");
-                            rotateAndScaleView(0);
-                        }
-                    }
-                }
-            });
-          //  mRotationSensor.start();
-            findViewById(R.id.press_me).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int orientation=getResources().getConfiguration().orientation;
-                    Log.d(TAG,"orientation ="+orientation);
-                }
-            });
-        }
+//        setContentView(R.layout.activity_main3);
+//      //  setContentView(new Panel(this));
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//
+//        TextView textView = (TextView) findViewById(R.id.tv_text);
+//
+//        if (textView != null) {
+//            textView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(getApplicationContext(), "clicking me", Toast.LENGTH_LONG).show();
+//                }
+//            });
+//        }
+//        mOverlayView = (IDOverlayView) findViewById(R.id.overlay);
+//        if(mOverlayView!=null) {
+//            mOverlayView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+////            mLayoutParams = mOverlayView.getLayoutParams();
+////            mRotationSensor = new RotateSensorManager(this);
+////          //  rotateAndScaleView(-90);
+////            mRotationSensor.setRotateCallBack(new RotateSensorManager.RotationCallBack() {
+////                @Override
+////                public void onRotate(float rotation) {
+////                    Log.d(TAG, "rotation actual degree=" + String.valueOf(rotation));
+////                    int rot = (int) rotation;
+////                    if (mOverlayView != null) {
+////                        if (225 < rot && rot <= 315) {
+////                            rotateAndScaleView(-90);
+////                            Log.d(TAG, "rotation degree 270");
+////                        } else {
+////                            Log.d(TAG, "rotation degree 90");
+////                            rotateAndScaleView(0);
+////                        }
+////                    }
+////                }
+////            });
+//          //  mRotationSensor.start();
+//
+//            findViewById(R.id.press_me).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    int orientation=180;
+//                    Log.d(TAG,"orientation ="+orientation);
+//                   // mOverlayView.setRotation(mOverlayView.getRotation()+orientation);
+//                    View view=findViewById(R.id.layout_root);
+//                    view.setRotation(view.getRotation()+orientation);
+//                }
+//            });
+//        }
         //  findViewById(R.id.overlay).setRotation(-90);
       //  TimerGridView pixelGrid = (TimerGridView) findViewById(R.id.timer_view);
        // pixelGrid.startPlay();

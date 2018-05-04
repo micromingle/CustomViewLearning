@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -24,7 +25,7 @@ public class TimerGridView extends View {
     private Paint mDividerPaint = new Paint();
     String mText = "";
     private String TAG = "TimerGridView";
-    String[] mTextArray = mText.split("");
+    String[] mTextArray = mText.split("_");
 
     public TimerGridView(Context context) {
         this(context, null);
@@ -44,7 +45,7 @@ public class TimerGridView extends View {
         TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.TimerGridView);
         mText = ta.getString(R.styleable.TimerGridView_timer_text);
         if (!TextUtils.isEmpty(mText)) {
-            mTextArray = mText.split("");
+            mTextArray = mText.split("_");
         }
         mNumColumns = ta.getInteger(R.styleable.TimerGridView_columnCount, 6);
         mNumRows = ta.getInteger(R.styleable.TimerGridView_rowCount, 6);
@@ -124,11 +125,9 @@ public class TimerGridView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawColor(Color.WHITE);
-
         if (mNumColumns == 0 || mNumRows == 0) {
             return;
         }
-
         int width = getWidth();
         int height = getHeight();
         Paint paint;
@@ -147,15 +146,21 @@ public class TimerGridView extends View {
                     paint = mBlackPaint;
                 }
                 if (mTextArray != null) {
-                    if (textIndex < mTextArray.length) {
+                    if (textIndex <= mTextArray.length) {
                         if (textIndex != 0) {
-                            String text = mTextArray[textIndex];
-                            float textWidth = paint.measureText(text);
-                            Paint.FontMetrics fm = paint.getFontMetrics();
-                            float textHeight = fm.descent - fm.ascent;
-                            int dx = (int) ((mCellWidth - textWidth) / 2);
-                            int dy = (int) (mCellHeight - textHeight) / 2;
-                            canvas.drawText(text, i * mCellWidth + dx, (j + 1) * mCellHeight - dy, paint);
+                            String text = mTextArray[textIndex-1];
+                            if(!text.contains("\n")){
+                                float textWidth = paint.measureText(text);
+                                Paint.FontMetrics fm = paint.getFontMetrics();
+                                float textHeight = fm.descent - fm.ascent;
+                                int dx = (int) ((mCellWidth - textWidth) / 2);
+                                int dy = (int) (mCellHeight - textHeight) / 2;
+                                canvas.drawText(text, i * mCellWidth + dx, (j + 1) * mCellHeight - dy, paint);
+                            }else{
+                                drawString(canvas,paint,text,i,j);
+                            }
+
+                            //drawString(canvas,paint,text, i * mCellWidth + dx,(j + 1) * mCellHeight - dy);
                         } else {
                             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
                             int bWidth = bitmap.getWidth();
@@ -182,6 +187,25 @@ public class TimerGridView extends View {
 
         for (int i = 1; i < mNumRows; i++) {
             canvas.drawLine(0, i * mCellHeight, width, i * mCellHeight, mDividerPaint);
+        }
+    }
+
+    Rect bounds = new Rect();
+    void drawString(Canvas canvas, Paint paint, String str,int indexI,int indexJ) {
+        String[] lines = str.split("\n");
+        int yoff = 0;
+        int xoff=0;
+        //bounds = new Rect();
+        for (int i = 0; i < lines.length; ++i) {
+            String text=lines[i];
+            float textWidth = paint.measureText(text);
+            Paint.FontMetrics fm = paint.getFontMetrics();
+            float textHeight = fm.descent - fm.ascent;
+            int dx = (int) ((mCellWidth - textWidth) / 2);
+            int dy = (int) (mCellHeight - textHeight) / 2;
+            canvas.drawText(text,  indexI * mCellWidth + dx, indexJ * mCellHeight + dy+yoff, paint);
+            paint.getTextBounds(text, 0, lines[i].length(), bounds);
+            yoff += bounds.height();
         }
     }
 

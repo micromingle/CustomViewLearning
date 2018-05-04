@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
 
+
     <com.jiandan.terence.firstdraglayout.TimerGridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,8 +18,9 @@
         android:id="@+id/timer_view"
         android:paddingRight="20dp"
         android:paddingTop="50dp"
-        custom:timer_text="泡一包泡面要三分钟，不能多，也不能少，多则太多，少则太少"
+        custom:timer_text="本_人_自_愿_通_过_fei\n飞_quan\n泉_jin\n金_fu\n服_向_其_合_作_机_构_申_请_dai\n贷_款_，_遵_守_合_约_，_同_意_上_报_征_信"
         custom:rowCount="8"
         custom:columnCount="6"/>
+
 
 </FrameLayout>

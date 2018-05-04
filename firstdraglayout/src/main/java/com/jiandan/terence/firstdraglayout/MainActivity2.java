@@ -32,14 +32,17 @@ public class MainActivity2 extends Activity {
             "<script src=\"http://www.myscript.com/a\"></script>şlkasşldkasşdksaşdkaşskdşk</body></html>";
     String html_value = "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"><title>Lorem Ipsum</title></head><body style=\"width:300px; color: #00000; \"><p><strong> About us</strong> </p><p><strong> Lorem Ipsum</strong> is simply dummy text .</p><p><strong> Lorem Ipsum</strong> is simply dummy text </p><p><strong> Lorem Ipsum</strong> is simply dummy text </p></body></html>";
     Button buttonClick, buttonLogin, buttonEnterLogin;
-    public static String loginJs = "javascript:(function() { " +
-            "if(document.getElementsByClassName('g-doc').length > 0){" +
-            "document.getElementById('entryMail').click();}" +
-            "document.getElementsByName('username')[0].value ='%s';" +
-            "document.getElementsByName('password')[0].value = '%s';" +
-            "document.getElementById('submit').click();" +
-            "})()";
-    String url = "http://m.mail.163.com/?adjust=1";
+   public  String loginJs ="";
+    //"javascript:(function() { " +
+//            "if(document.getElementsByClassName('g-doc').length > 0){" +
+//            "document.getElementById('entryMail').click();}" +
+//            "document.getElementsByName('username')[0].value ='%s';" +
+//            "document.getElementsByName('password')[0].value = '%s';" +
+//            "document.getElementById('submit').click();" +
+//            "})()";
+
+    String url = "http://mail.163.com/html/130724_appcenter/#intro";
+
 
 
     @Override
@@ -55,7 +58,13 @@ public class MainActivity2 extends Activity {
         buttonEnterLogin = (Button) findViewById(R.id.enter_login);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-
+         url="http://mail.163.com/html/130724_appcenter/#intro";
+       final String loginJs="javascript:(function() { " +
+                "document.getElementById('j-loginBtn').click();" +
+                "document.getElementById('ipt_act').value='%s';" +
+                "document.getElementById('ipt_psw').value='%s';" +
+                "document.getElementById('j-btn-login').click();"
+                + "})()";;
         //webView.loadData(data,"text/html","utf-8");
         webView.loadUrl(url);
         //webView.loadDataWithBaseURL(null, data, "text/html","utf-8", null);
@@ -91,6 +100,7 @@ public class MainActivity2 extends Activity {
                 Log.d(TAG, "loading js login");
                 String js = String.format(loginJs, "haimingwei_haimian@163.com", "scofreld5119");
                 Toast.makeText(MainActivity2.this, "js login", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "loading js ="+js);
                 webView.loadUrl(js);
             }
         });
@@ -108,7 +118,6 @@ public class MainActivity2 extends Activity {
             }
         });
         clearWebViewCache();
-        loginJs = "javascript:(function() { if(document.getElementsByClassName('g-doc').length > 0){ document.getElementById('entryMail').click();} document.getElementsByName('username')[0].value='for_test_personal@163.com';document.getElementsByName('password')[0].value='Aa123456';document.getElementById('submit').click(); })()";
     }
 
     public void clearWebViewCache() {
